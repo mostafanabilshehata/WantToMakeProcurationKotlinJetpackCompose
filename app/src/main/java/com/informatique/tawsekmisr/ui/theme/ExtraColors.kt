@@ -24,7 +24,8 @@ data class ExtraColors(
     val homeVerticalCardBackground : Color,
     val iconSettings : Color,
     val textDarkGray : Color,
-    val white : Color
+    val white : Color,
+    val black :Color
 
 
 
@@ -55,7 +56,8 @@ val LightExtraColors = ExtraColors(
     homeVerticalCardBackground = HomeVerticalCardsBackgroundLight,
     iconSettings = SettingiconLight ,
     textDarkGray = TextDarkGrayLight,
-    white = White
+    white = White,
+    black = WhiteB
 
 
 )
@@ -86,7 +88,8 @@ val DarkExtraColors = ExtraColors(
     homeVerticalCardBackground = HomeVerticalCardsBackgroundDark,
     iconSettings = SettingiconDark,
     textDarkGray = TextDarkGrayDark,
-    white = Black
+    white = Black,
+    black =  BlackW
 
 )
 

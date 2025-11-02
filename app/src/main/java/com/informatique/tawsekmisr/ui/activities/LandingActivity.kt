@@ -264,38 +264,9 @@ class LandingActivity: BaseActivity() {
                 )
             }
 
-            // Show API update required dialog - user cannot dismiss it
-            if (showUpdateDialog && updateInfo != null) {
-                UpdateRequiredBottomSheet(
-                    currentVersion = updateInfo!!.first,
-                    requiredVersion = updateInfo!!.second,
-                    onClose = {
-                        (this@LandingActivity as? ComponentActivity)?.finish()
-                    }
-                )
-            }
 
-            // Show root detection dialog if device is rooted - Using CustomAlertDialog
-            if (showRootDialog) {
-                CustomAlertDialog(
-                    showDialog = showRootDialog,
-                    onDismiss = {
-                        // Force close app when user clicks close button
-                        (this@LandingActivity as? ComponentActivity)?.finish()
-                    },
-                    icon = Icons.Default.Warning,
-                    iconTint = Color.White,
-                    iconBackgroundTint = Color(0xFFE53935), // Red color for warning
-                    title = if (lang == "ar") "تحذير: جهاز مروت" else "Warning: Rooted Device",
-                    message = if (lang == "ar")
-                        "تم اكتشاف أن جهازك مروت. يرجى ملاحظة أن استخدام هذا التطبيق على جهاز مروت قد يعرض بياناتك للخطر. نوصي باستخدام التطبيق على جهاز غير مروت."
-                    else
-                        "It has been detected that your device is rooted. Please note that using this app on a rooted device may expose your data to security risks. We recommend using the app on a non-rooted device.",
-                    dismissButtonText = if (lang == "ar") "إغلاق" else "Close",
-                    onConfirm = null, // No confirm button - only close button
-                    showDismissButton = true
-                )
-            }
+
+
 
             CompositionLocalProvider(
                 LocalLayoutDirection provides if (lang == "ar") LayoutDirection.Rtl else LayoutDirection.Ltr,
@@ -304,6 +275,37 @@ class LandingActivity: BaseActivity() {
                 LocalGovernments provides governments
             ) {
                 AppTheme(themeOption = themeOption) {
+                    // Show API update required dialog - user cannot dismiss it
+                    if (showUpdateDialog && updateInfo != null) {
+                        UpdateRequiredBottomSheet(
+                            currentVersion = updateInfo!!.first,
+                            requiredVersion = updateInfo!!.second,
+                            onClose = {
+                                (this@LandingActivity as? ComponentActivity)?.finish()
+                            }
+                        )
+                    }
+                    // Show root detection dialog if device is rooted - Using CustomAlertDialog
+//            if (showRootDialog) {
+//                CustomAlertDialog(
+//                    showDialog = showRootDialog,
+//                    onDismiss = {
+//                        // Force close app when user clicks close button
+//                        (this@LandingActivity as? ComponentActivity)?.finish()
+//                    },
+//                    icon = Icons.Default.Warning,
+//                    iconTint = Color.White,
+//                    iconBackgroundTint = Color(0xFFE53935), // Red color for warning
+//                    title = if (lang == "ar") "تحذير: جهاز مروت" else "Warning: Rooted Device",
+//                    message = if (lang == "ar")
+//                        "تم اكتشاف أن جهازك مروت. يرجى ملاحظة أن استخدام هذا التطبيق على جهاز مروت قد يعرض بياناتك للخطر. نوصي باستخدام التطبيق على جهاز غير مروت."
+//                    else
+//                        "It has been detected that your device is rooted. Please note that using this app on a rooted device may expose your data to security risks. We recommend using the app on a non-rooted device.",
+//                    dismissButtonText = if (lang == "ar") "إغلاق" else "Close",
+//                    onConfirm = null, // No confirm button - only close button
+//                    showDismissButton = true
+//                )
+//            }
                     Surface(modifier = Modifier.fillMaxSize()) {
                         Box(modifier = Modifier.fillMaxSize()) {
                             // Show custom splash overlay with logo and branding during loading
@@ -730,7 +732,7 @@ fun UpdateRequiredBottomSheet(
         shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp),
         dragHandle = null,
         containerColor = Color.Transparent,
-        scrimColor = Color.Black.copy(alpha = 0.5f)
+        scrimColor = LocalExtraColors.current.black
     ) {
         // Full screen gradient background content - matching the image colors
         Box(

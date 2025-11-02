@@ -6,14 +6,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ContentPasteSearch
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -110,16 +113,19 @@ fun OtherServicesScreen(navController: NavController) {
                 OtherServiceItem(
                     title = translationTitle,
                     subtitle = subtitle,
-                    iconColor = extraColors.accent
+                    iconColor = extraColors.accent,
+                    icon = Icons.Default.Translate
                 ),
                 OtherServiceItem(
                     title = realEstateTitle,
                     subtitle = subtitle,
-                    iconColor = extraColors.green
+                    iconColor = extraColors.green,
+                    icon = Icons.Default.ContentPasteSearch
                 ),
                 OtherServiceItem(
                     title = contractCopyTitle,
                     subtitle = subtitle,
+                    icon = Icons.Default.Description,
                     iconColor = extraColors.gold
                 )
             )
@@ -129,7 +135,8 @@ fun OtherServicesScreen(navController: NavController) {
                     title = service.title,
                     subtitle = service.subtitle,
                     iconColor = service.iconColor,
-                    onClick = {
+                    icon = service.icon,
+                            onClick = {
                         val encodedUrl = URLEncoder.encode("https://rern.gov.eg/", StandardCharsets.UTF_8.toString())
                         val encodedTitle = URLEncoder.encode(service.title, StandardCharsets.UTF_8.toString())
                         navController.navigate("webview/$encodedUrl/$encodedTitle")
@@ -144,7 +151,8 @@ fun OtherServicesScreen(navController: NavController) {
 private data class OtherServiceItem(
     val title: String,
     val subtitle: String,
-    val iconColor: Color
+    val iconColor: Color,
+    val icon : ImageVector
 )
 
 @Composable
@@ -152,6 +160,7 @@ private fun OtherServiceCard(
     title: String,
     subtitle: String,
     iconColor: Color,
+    icon: ImageVector,
     onClick: () -> Unit
 ) {
     val extraColors = LocalExtraColors.current
@@ -177,7 +186,7 @@ private fun OtherServiceCard(
                 color = iconColor.copy(alpha = 0.15f)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Description,
+                    imageVector = icon,
                     contentDescription = null,
                     tint = iconColor,
                     modifier = Modifier.padding(16.dp)

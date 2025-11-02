@@ -34,6 +34,7 @@ import com.informatique.tawsekmisr.ui.theme.LocalExtraColors
  * @param onConfirm Called when confirm button is clicked (nullable - if null, button is hidden)
  * @param showDismissButton Whether to show the dismiss button (default: true)
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomAlertDialog(
     showDialog: Boolean,
@@ -51,13 +52,13 @@ fun CustomAlertDialog(
     val extraColors = LocalExtraColors.current
 
     if (showDialog) {
-        Dialog(onDismissRequest = onDismiss) {
+        BasicAlertDialog(onDismissRequest = onDismiss) {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 shape = RoundedCornerShape(24.dp),
-                color = Color.White
+                color = extraColors.black
             ) {
                 Column(
                     modifier = Modifier
@@ -88,7 +89,7 @@ fun CustomAlertDialog(
                     Text(
                         text = title,
                         fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.SemiBold,
                         color = extraColors.textBlue,
                         textAlign = TextAlign.Center
                     )
@@ -137,7 +138,7 @@ fun CustomAlertDialog(
                             Button(
                                 onClick = onDismiss,
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = extraColors.gold.copy(alpha = 0.2f),
+                                    containerColor = extraColors.textDarkGray.copy(alpha = 0.2f),
                                     contentColor = extraColors.textGray
                                 ),
                                 shape = RoundedCornerShape(12.dp),

@@ -40,6 +40,7 @@ val HomeVerticalCardsBackgroundLight = Color(0xFFFCFCFC)
 
 val SettingiconLight = Color(0xFF8A898F)
 val White = Color(0xFF000000)
+val WhiteB = Color(0xFFFFFFFF)
 
 
 
@@ -64,6 +65,7 @@ val HomeVerticalCardsBackgroundDark = Color(0xFF2A2A2C)
 
 val SettingiconDark = Color(0xFFFAFAFC)
 val Black = Color(0xFFFFFFFF)
+val BlackW = Color(0xFF000000)
 
 
 
