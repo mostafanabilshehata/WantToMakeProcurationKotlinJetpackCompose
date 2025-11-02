@@ -62,6 +62,7 @@
     <string name="filter_all">الكل</string>
     <string name="filter_nearest">الأقرب</string>
     <string name="filter_premium">المميزة</string>
+    <string name="service_unavailable_message">يرجى التحقق من اتصالك بالإنترنت والمحاولة لاحقاً.</string>
 
     <!-- Location Permission -->
     <string name="location_permission_title">الوصول إلى الموقع مطلوب</string>

@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,6 +31,7 @@ import com.google.maps.android.compose.*
 import com.informatique.tawsekmisr.R
 import com.informatique.tawsekmisr.data.model.Office
 import com.informatique.tawsekmisr.ui.components.localizedApp
+import com.informatique.tawsekmisr.ui.components.CustomAlertDialog
 import com.informatique.tawsekmisr.ui.theme.LocalExtraColors
 import com.informatique.tawsekmisr.ui.providers.LocalOffices
 import com.informatique.tawsekmisr.ui.providers.LocalGovernments
@@ -58,6 +60,10 @@ fun FindOfficeScreen(
     val offices = LocalOffices.current
     val governments = LocalGovernments.current
 
+    // Get LandingViewModel to retry data loading if needed
+    val landingViewModel: com.informatique.tawsekmisr.ui.viewmodels.LandingViewModel = hiltViewModel()
+    val landingUiState by landingViewModel.uiState.collectAsState()
+
     // Collect state from ViewModel
     val selectedFilter by viewModel.selectedFilter.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -69,6 +75,10 @@ fun FindOfficeScreen(
     var isGovernmentDropdownExpanded by remember { mutableStateOf(false) }
     var showLocationPermissionDialog by remember { mutableStateOf(false) }
     var isMapView by remember { mutableStateOf(false) }
+
+    // Custom dialog state for orgType == 1
+    var showOrgTypeWarningDialog by remember { mutableStateOf(false) }
+    var selectedOfficeForNavigation by remember { mutableStateOf<Office?>(null) }
 
     // Location permission launcher
     val locationPermissionLauncher = rememberLauncherForActivityResult(
@@ -264,173 +274,307 @@ fun FindOfficeScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Government Dropdown - Only visible when "all" filter is selected
-        if (selectedFilter == "all") {
-            ExposedDropdownMenuBox(
-                expanded = isGovernmentDropdownExpanded,
-                onExpandedChange = { isGovernmentDropdownExpanded = !isGovernmentDropdownExpanded }
+        // Check if offices are empty and show error message with retry
+        if (offices.isEmpty()) {
+            // Service is down - show error message in place of content
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
             ) {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(MenuAnchorType.PrimaryNotEditable),
-                    shape = RoundedCornerShape(16.dp),
-                    color = extraColors.cardBackground
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                    modifier = Modifier.padding(32.dp)
                 ) {
-                    Row(
+                    // Error Icon
+                    Box(
+                        modifier = Modifier
+                            .size(120.dp)
+                            .background(
+                                color = extraColors.iconLightBlue.copy(alpha = 0.2f),
+                                shape = CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CloudOff,
+                            contentDescription = null,
+                            tint = extraColors.iconDarkBlue,
+                            modifier = Modifier.size(60.dp)
+                        )
+                    }
+
+                    // Error Message (Arabic)
+                    Text(
+                        text = "الخدمة خارج الخدمة حالياً",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = extraColors.textGray,
+                        textAlign = TextAlign.Center
+                    )
+
+                    // Error Message (English)
+                    Text(
+                        text = "Service is currently unavailable",
+                        fontSize = 16.sp,
+                        color = extraColors.textGray,
+                        textAlign = TextAlign.Center
+                    )
+
+                    // Additional Info
+                    Text(
+                        text = localizedApp(R.string.service_unavailable_message),
+                        fontSize = 14.sp,
+                        color = extraColors.textGray,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 20.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Retry Button
+                    Button(
+                        onClick = {
+                            landingViewModel.retryLoadData()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = extraColors.iconDarkBlue,
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .height(56.dp),
+                        enabled = landingUiState !is com.informatique.tawsekmisr.ui.viewmodels.LandingUiState.Loading
+                    ) {
+                        if (landingUiState is com.informatique.tawsekmisr.ui.viewmodels.LandingUiState.Loading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = Color.White,
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Text(
+                                    text = localizedApp(R.string.retry),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            // Normal content when data is available
+            // Government Dropdown - Only visible when "all" filter is selected
+            if (selectedFilter == "all") {
+                ExposedDropdownMenuBox(
+                    expanded = isGovernmentDropdownExpanded,
+                    onExpandedChange = { isGovernmentDropdownExpanded = !isGovernmentDropdownExpanded }
+                ) {
+                    Surface(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { isGovernmentDropdownExpanded = true }
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                        shape = RoundedCornerShape(16.dp),
+                        color = extraColors.cardBackground
                     ) {
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { isGovernmentDropdownExpanded = true }
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.AccountBalance,
+                                    contentDescription = null,
+                                    tint = extraColors.iconDarkBlue
+                                )
+                                Text(
+                                    text = if (selectedGovernment == "all")
+                                        localizedApp(R.string.all_governments)
+                                    else selectedGovernment,
+                                    fontSize = 16.sp,
+                                    color = extraColors.textBlue
+                                )
+                            }
                             Icon(
-                                imageVector = Icons.Default.AccountBalance,
+                                imageVector = Icons.Default.KeyboardArrowDown,
                                 contentDescription = null,
-                                tint = extraColors.iconDarkBlue
-                            )
-                            Text(
-                                text = if (selectedGovernment == "all")
-                                    localizedApp(R.string.all_governments)
-                                else selectedGovernment,
-                                fontSize = 16.sp,
-                                color = extraColors.textBlue
+                                tint = extraColors.textGray
                             )
                         }
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = null,
-                            tint = extraColors.textGray
-                        )
+                    }
+
+                    ExposedDropdownMenu(
+                        expanded = isGovernmentDropdownExpanded,
+                        onDismissRequest = { isGovernmentDropdownExpanded = false }
+                    ) {
+                        governmentOptions.forEach { government ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = if (government == "all")
+                                            localizedApp(R.string.all_governments)
+                                        else government
+                                    )
+                                },
+                                onClick = {
+                                    viewModel.setSelectedGovernment(government)
+                                    isGovernmentDropdownExpanded = false
+                                }
+                            )
+                        }
                     }
                 }
 
-                ExposedDropdownMenu(
-                    expanded = isGovernmentDropdownExpanded,
-                    onDismissRequest = { isGovernmentDropdownExpanded = false }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            // Search Bar
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = extraColors.cardBackground
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    governmentOptions.forEach { government ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = if (government == "all")
-                                        localizedApp(R.string.all_governments)
-                                    else government
-                                )
-                            },
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null,
+                        tint = extraColors.textGray
+                    )
+                    TextField(
+                        value = searchQuery,
+                        onValueChange = { viewModel.setSearchQuery(it) },
+                        placeholder = {
+                            Text(
+                                text = localizedApp(R.string.search_offices),
+                                color = extraColors.textGray
+                            )
+                        },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Filter Chips - Reordered to Nearest, All, Premium
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                FilterChip(
+                    label = localizedApp(R.string.filter_nearest),
+                    icon = Icons.Default.Navigation,
+                    isSelected = selectedFilter == "nearest",
+                    onClick = { viewModel.setFilter("nearest") },
+                    modifier = Modifier.weight(1f)
+                )
+                FilterChip(
+                    label = localizedApp(R.string.filter_all),
+                    icon = Icons.Default.Apartment,
+                    isSelected = selectedFilter == "all",
+                    onClick = { viewModel.setFilter("all") },
+                    modifier = Modifier.weight(1f)
+                )
+                FilterChip(
+                    label = localizedApp(R.string.filter_premium),
+                    icon = Icons.Default.Star,
+                    isSelected = selectedFilter == "premium",
+                    onClick = { viewModel.setFilter("premium") },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Content: List View or Map View
+            if (isMapView) {
+                // Map View
+                OfficeMapView(
+                    offices = filteredOffices,
+                    navController = navController,
+                    showBookingButton = showBookingButton,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                // Office List
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(filteredOffices) { office ->
+                        OfficeCard(
+                            office = office,
                             onClick = {
-                                viewModel.setSelectedGovernment(government)
-                                isGovernmentDropdownExpanded = false
+                                // Check if orgType == 1, show warning dialog
+                                if (office.orgType == 1) {
+                                    selectedOfficeForNavigation = office
+                                    showOrgTypeWarningDialog = true
+                                } else {
+                                    // Navigate directly to office details
+                                    navController.navigate("office_details/${office.id}/${office.distance}/$showBookingButton")
+                                }
                             }
                         )
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        // Search Bar
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            color = extraColors.cardBackground
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null,
-                    tint = extraColors.textGray
-                )
-                TextField(
-                    value = searchQuery,
-                    onValueChange = { viewModel.setSearchQuery(it) },
-                    placeholder = {
-                        Text(
-                            text = localizedApp(R.string.search_offices),
-                            color = extraColors.textGray
-                        )
-                    },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Filter Chips - Reordered to Nearest, All, Premium
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            FilterChip(
-                label = localizedApp(R.string.filter_nearest),
-                icon = Icons.Default.Navigation,
-                isSelected = selectedFilter == "nearest",
-                onClick = { viewModel.setFilter("nearest") },
-                modifier = Modifier.weight(1f)
-            )
-            FilterChip(
-                label = localizedApp(R.string.filter_all),
-                icon = Icons.Default.Apartment,
-                isSelected = selectedFilter == "all",
-                onClick = { viewModel.setFilter("all") },
-                modifier = Modifier.weight(1f)
-            )
-            FilterChip(
-                label = localizedApp(R.string.filter_premium),
-                icon = Icons.Default.Star,
-                isSelected = selectedFilter == "premium",
-                onClick = { viewModel.setFilter("premium") },
-                modifier = Modifier.weight(1f)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Content: List View or Map View
-        if (isMapView) {
-            // Map View
-            OfficeMapView(
-                offices = filteredOffices,
-                navController = navController,
-                showBookingButton = showBookingButton,
-                modifier = Modifier.fillMaxSize()
-            )
-        } else {
-            // Office List
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(filteredOffices) { office ->
-                    OfficeCard(
-                        office = office,
-                        onClick = {
-                            // Navigate to office details with calculated distance and booking button visibility
-                            navController.navigate("office_details/${office.id}/${office.distance}/$showBookingButton")
-                        }
-                    )
-                }
-            }
         }
     }
+
+    // Custom warning dialog for orgType == 1
+    CustomAlertDialog(
+        showDialog = showOrgTypeWarningDialog,
+        onDismiss = {
+            showOrgTypeWarningDialog = false
+            selectedOfficeForNavigation = null
+        },
+        icon = Icons.Default.Info,
+        iconTint = extraColors.gold,
+        iconBackgroundTint = extraColors.gold.copy(alpha = 0.2f),
+        title = "تنبيه",
+        message = "الخدمة بهذا الفرع بمقابل مادي يُحصّل داخله",
+        confirmButtonText = "استمرار",
+        dismissButtonText = "إغلاق",
+        onConfirm = {
+            // Navigate to office details when user clicks continue
+            selectedOfficeForNavigation?.let { office ->
+                navController.navigate("office_details/${office.id}/${office.distance}/$showBookingButton")
+            }
+            selectedOfficeForNavigation = null
+        },
+        showDismissButton = true
+    )
 }
 
 @Composable

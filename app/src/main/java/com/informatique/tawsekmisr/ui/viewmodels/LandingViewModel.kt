@@ -52,6 +52,13 @@ class LandingViewModel @Inject constructor(
     }
 
     /**
+     * Retry loading data - can be called from FindOfficeScreen if initial load failed
+     */
+    fun retryLoadData() {
+        checkVersionAndLoadData()
+    }
+
+    /**
      * Check version and load initial data (categories, offices, and governments)
      * This is called once when the app starts
      * Offices and governments are loaded concurrently and independently

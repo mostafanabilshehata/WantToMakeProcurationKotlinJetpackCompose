@@ -151,6 +151,14 @@ dependencies {
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
 
+    // --- Root Detection ---
+    implementation(libs.rootbeer.lib)
+
+    //Version Checker
+    implementation(libs.jversionchecker)
+    implementation(libs.app.update)
+
+
     // --- Tests ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

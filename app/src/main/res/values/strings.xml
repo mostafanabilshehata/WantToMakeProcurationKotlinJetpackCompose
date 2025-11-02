@@ -62,6 +62,7 @@
     <string name="filter_all">All</string>
     <string name="filter_nearest">Nearest</string>
     <string name="filter_premium">Premium</string>
+    <string name="service_unavailable_message">Please check your internet connection and try again later.</string>
 
     <!-- Location Permission -->
     <string name="location_permission_title">Location Access Required</string>

@@ -1,7 +1,9 @@
 [versions]
 # Gradle & Kotlin
 agp = "8.10.1"
+appUpdate = "2.1.0"
 concurrentFuturesKtx = "1.3.0"
+jversionchecker = "1.9.0"
 kotlin = "2.1.0"
 composeCompiler = "1.7.10"
 
@@ -30,6 +32,7 @@ playServicesLocation = "21.3.0"
 room = "2.8.1"
 
 # WorkManager
+rootbeerLib = "0.1.1"
 work = "2.10.5"
 
 # Paging
@@ -84,6 +87,8 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 androidx-concurrent-futures-ktx = { module = "androidx.concurrent:concurrent-futures-ktx", version.ref = "concurrentFuturesKtx" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+app-update = { module = "com.google.android.play:app-update", version.ref = "appUpdate" }
+jversionchecker = { module = "com.github.abanoub92:jVersionChecker", version.ref = "jversionchecker" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar" }
 
@@ -133,6 +138,7 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 # WorkManager
+rootbeer-lib = { module = "com.scottyab:rootbeer-lib", version.ref = "rootbeerLib" }
 work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
 
 # Paging

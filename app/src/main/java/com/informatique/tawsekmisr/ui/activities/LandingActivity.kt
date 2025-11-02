@@ -2,7 +2,9 @@ package com.informatique.tawsekmisr.ui.activities
 
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
@@ -26,6 +28,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -36,6 +39,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +63,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -85,7 +99,11 @@ import com.informatique.tawsekmisr.ui.providers.LocalGovernments
 import com.informatique.tawsekmisr.ui.screens.OfficeReservationScreen
 import com.informatique.tawsekmisr.ui.screens.SettingsScreen
 import com.informatique.tawsekmisr.ui.theme.LocalExtraColors
+import com.informatique.tawsekmisr.utils.RootUtil
 import dagger.hilt.android.AndroidEntryPoint
+import com.abanoub.versionchecker.UpdateAvailableCallback
+import com.abanoub.versionchecker.VersionChecker
+import com.informatique.tawsekmisr.ui.components.CustomAlertDialog
 import java.net.URLDecoder
 import java.util.Locale
 
@@ -130,14 +148,92 @@ class LandingActivity: BaseActivity() {
             // Control splash screen visibility
             var showContent by remember { mutableStateOf(false) }
 
-            LaunchedEffect(offices, governments, uiState) {
-                // Check if all data is loaded
-                val isDataLoaded = offices.isNotEmpty() &&
-                               governments.isNotEmpty() &&
-                               uiState !is LandingUiState.Loading
+            // Root detection state
+            var showRootDialog by remember { mutableStateOf(false) }
+            var isRootCheckComplete by remember { mutableStateOf(false) }
 
-                if (isDataLoaded) {
-                    showContent = true
+            // Play Store update check state
+            var showPlayStoreUpdateDialog by remember { mutableStateOf(false) }
+            var isPlayStoreCheckComplete by remember { mutableStateOf(false) }
+
+            // Check for Play Store updates with timeout
+            LaunchedEffect(Unit) {
+                // Use withTimeoutOrNull for automatic timeout handling
+                kotlinx.coroutines.withTimeoutOrNull(5000) {
+                    try {
+                        val checker = VersionChecker.getInstance(this@LandingActivity)
+                        checker.check(object : UpdateAvailableCallback {
+                            override fun onUpdateAvailableListener(updateAvailable: Boolean) {
+                                if (updateAvailable) {
+                                    showPlayStoreUpdateDialog = true
+                                }
+                                isPlayStoreCheckComplete = true
+                            }
+
+                            override fun onCheckFailureListener() {
+                                // Failed to check Play Store, continue with normal flow
+                                isPlayStoreCheckComplete = true
+                            }
+                        })
+
+                        // Keep the coroutine alive to prevent timeout from completing prematurely
+                        kotlinx.coroutines.delay(Long.MAX_VALUE)
+                    } catch (_: Exception) {
+                        // Error in Play Store check, continue with normal flow
+                        isPlayStoreCheckComplete = true
+                    }
+                }
+
+                // Timeout occurred or exception caught, ensure we complete the check
+                if (!isPlayStoreCheckComplete) {
+                    isPlayStoreCheckComplete = true
+                }
+            }
+
+            // Check for rooted device during splash
+            LaunchedEffect(Unit) {
+                val rootUtil = RootUtil()
+                val isRooted = rootUtil.isDeviceRooted(applicationContext)
+                if (isRooted) {
+                    showRootDialog = true
+                }
+                isRootCheckComplete = true
+            }
+
+            // Modified: Always continue to app after checks complete, even if data failed
+            LaunchedEffect(uiState, isRootCheckComplete, isPlayStoreCheckComplete) {
+                // Wait for all checks to complete
+                if (isRootCheckComplete && isPlayStoreCheckComplete) {
+                    // Check UI state
+                    when (val state = uiState) {
+                        is LandingUiState.Loading -> {
+                            // Still loading, wait
+                        }
+                        is LandingUiState.Success -> {
+                            // Data loaded successfully
+                            showContent = true
+                        }
+                        is LandingUiState.Error -> {
+                            // Data failed to load, but continue to app
+                            // Show toast notification
+                            val message = if (lang == "ar") {
+                                "الخدمة خارج الخدمة حالياً - يمكنك المحاولة لاحقاً"
+                            } else {
+                                "Service is currently unavailable - You can try later"
+                            }
+                            Toast.makeText(
+                                this@LandingActivity,
+                                message,
+                                Toast.LENGTH_LONG
+                            ).show()
+                            showContent = true
+                        }
+                        is LandingUiState.UpdateRequired -> {
+                            // Only block if it's a critical update from API
+                            // But we'll show the content anyway since we have VersionChecker as backup
+                            showContent = true
+                        }
+                    }
                 }
             }
 
@@ -157,42 +253,47 @@ class LandingActivity: BaseActivity() {
                 }
             }
 
-            // Show update required dialog - user cannot dismiss it
-            if (showUpdateDialog && updateInfo != null) {
-                AlertDialog(
-                    onDismissRequest = { /* Cannot dismiss */ },
-                    title = {
-                        Text(
-                            text = if (lang == "ar") "تحديث مطلوب" else "Update Required",
-                            fontWeight = FontWeight.Bold
-                        )
-                    },
-                    text = {
-                        Column {
-                            Text(
-                                text = if (lang == "ar")
-                                    "يجب تحديث التطبيق للمتابعة. الإصدار الحالي: ${updateInfo!!.first}, الإصدار المطلوب: ${updateInfo!!.second}"
-                                else
-                                    "You must update the app to continue. Current version: ${updateInfo!!.first}, Required version: ${updateInfo!!.second}"
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = if (lang == "ar")
-                                    "سيتم إغلاق التطبيق الآن."
-                                else
-                                    "The app will close now."
-                            )
-                        }
-                    },
-                    confirmButton = {
-                        Button(
-                            onClick = {
-                                (this@LandingActivity as? ComponentActivity)?.finish()
-                            }
-                        ) {
-                            Text(if (lang == "ar") "إغلاق" else "Close")
-                        }
+            // Show Play Store update dialog first (if needed)
+            if (showPlayStoreUpdateDialog) {
+                UpdateRequiredBottomSheet(
+                    currentVersion = packageManager.getPackageInfo(packageName, 0).versionCode,
+                    requiredVersion = 0,
+                    onClose = {
+                        (this@LandingActivity as? ComponentActivity)?.finish()
                     }
+                )
+            }
+
+            // Show API update required dialog - user cannot dismiss it
+            if (showUpdateDialog && updateInfo != null) {
+                UpdateRequiredBottomSheet(
+                    currentVersion = updateInfo!!.first,
+                    requiredVersion = updateInfo!!.second,
+                    onClose = {
+                        (this@LandingActivity as? ComponentActivity)?.finish()
+                    }
+                )
+            }
+
+            // Show root detection dialog if device is rooted - Using CustomAlertDialog
+            if (showRootDialog) {
+                CustomAlertDialog(
+                    showDialog = showRootDialog,
+                    onDismiss = {
+                        // Force close app when user clicks close button
+                        (this@LandingActivity as? ComponentActivity)?.finish()
+                    },
+                    icon = Icons.Default.Warning,
+                    iconTint = Color.White,
+                    iconBackgroundTint = Color(0xFFE53935), // Red color for warning
+                    title = if (lang == "ar") "تحذير: جهاز مروت" else "Warning: Rooted Device",
+                    message = if (lang == "ar")
+                        "تم اكتشاف أن جهازك مروت. يرجى ملاحظة أن استخدام هذا التطبيق على جهاز مروت قد يعرض بياناتك للخطر. نوصي باستخدام التطبيق على جهاز غير مروت."
+                    else
+                        "It has been detected that your device is rooted. Please note that using this app on a rooted device may expose your data to security risks. We recommend using the app on a non-rooted device.",
+                    dismissButtonText = if (lang == "ar") "إغلاق" else "Close",
+                    onConfirm = null, // No confirm button - only close button
+                    showDismissButton = true
                 )
             }
 
@@ -394,6 +495,8 @@ class LandingActivity: BaseActivity() {
             }
         }
     }
+
+    // Remove the checkPlayStoreUpdate() method - no longer needed
 }
 
 @Composable
@@ -618,4 +721,172 @@ fun defaultExitTransition(): ExitTransition {
         targetOffsetX = { -it / 4 },
         animationSpec = tween(durationMillis = 300)
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UpdateRequiredBottomSheet(
+    currentVersion: Int,
+    requiredVersion: Int,
+    onClose: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    val locale = LocalAppLocale.current
+    val isArabic = locale.language == "ar"
+    val context = LocalContext.current
+
+    // Handle back button press - close app
+    BackHandler {
+        onClose()
+    }
+
+    ModalBottomSheet(
+        onDismissRequest = { /* Do not dismiss */ },
+        sheetState = sheetState,
+        shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp),
+        dragHandle = null,
+        containerColor = Color.Transparent,
+        scrimColor = Color.Black.copy(alpha = 0.5f)
+    ) {
+        // Full screen gradient background content - matching the image colors
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF2B5278), // Darker blue (top)
+                            Color(0xFF1E3A5F)  // Even darker blue (bottom)
+                        )
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 40.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+
+                // Download Icon
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .background(
+                            color = Color.White,
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowDownward,
+                        contentDescription = "Update Required",
+                        tint = Color(0xFF2B5278),
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(40.dp))
+
+                // Title (Arabic) - Using app theme typography
+                Text(
+                    text = "تحديث مطلوب",
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Title (English) - Using app theme typography
+                Text(
+                    text = "Update Required",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = 22.sp
+                    ),
+                    color = Color.White.copy(alpha = 0.9f),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Message (Arabic) - Using app theme typography
+                Text(
+                    text = "يتوفر إصدار جديد من التطبيق. يرجى التحديث للمتابعة.",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 18.sp,
+                        lineHeight = 28.sp
+                    ),
+                    color = Color.White.copy(alpha = 0.95f),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Message (English) - Using app theme typography
+                Text(
+                    text = "A new version is available. Please update to continue.",
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontSize = 16.sp,
+                        lineHeight = 24.sp
+                    ),
+                    color = Color.White.copy(alpha = 0.85f),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(48.dp))
+
+                // Update Button - directly below text - Opens Play Store
+                Button(
+                    onClick = {
+                        // Open Play Store when user clicks update
+                        try {
+                            context.startActivity(
+                                android.content.Intent(
+                                    android.content.Intent.ACTION_VIEW,
+                                    android.net.Uri.parse("market://details?id=${context.packageName}")
+                                )
+                            )
+                        } catch (e: android.content.ActivityNotFoundException) {
+                            // Play Store not installed, open web browser
+                            context.startActivity(
+                                android.content.Intent(
+                                    android.content.Intent.ACTION_VIEW,
+                                    android.net.Uri.parse("https://play.google.com/store/apps/details?id=${context.packageName}")
+                                )
+                            )
+                        }
+                        // Close app after opening store
+                        onClose()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color(0xFF2B5278)
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                ) {
+                    Text(
+                        text = if (isArabic) "تحديث الآن | Update Now" else "Update Now | تحديث الآن",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
+    }
 }

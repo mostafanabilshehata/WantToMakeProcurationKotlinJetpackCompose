@@ -16,8 +16,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://jitpack.io")
     }
 }
 
-rootProject.name = "Want To Make Procuration"
+rootProject.name = "Want To Make Procuration "
 include(":app")
