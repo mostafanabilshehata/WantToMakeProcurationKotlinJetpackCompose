@@ -1,0 +1,32 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Background circle with animation -->
+    <group
+        android:name="background_group"
+        android:pivotX="54"
+        android:pivotY="54">
+        <path
+            android:name="background_circle"
+            android:pathData="M54,54m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0"
+            android:fillColor="@color/splash_icon_tint"
+            android:fillAlpha="0.1"/>
+    </group>
+
+    <!-- Logo placeholder - will be replaced by actual logo -->
+    <group
+        android:name="logo_group"
+        android:pivotX="54"
+        android:pivotY="54"
+        android:scaleX="0.6"
+        android:scaleY="0.6">
+        <path
+            android:name="logo_path"
+            android:pathData="M24,24h60v60h-60z"
+            android:fillColor="@color/splash_icon_tint"/>
+    </group>
+</vector>
+

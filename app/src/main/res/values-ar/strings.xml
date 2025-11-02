@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">أرغب في عمل توكيل</string>
+
+    <!-- Common UI -->
+    <string name="loading">جاري التحميل</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="back_button">رجوع</string>
+    <string name="ok_button">حسناً</string>
+    <string name="error_title">خطأ</string>
+
+    <!-- Home Screen -->
+    <string name="hello_label">مرحباً بك</string>
+    <string name="how_can_help">كيف يمكننا مساعدتك اليوم؟</string>
+    <string name="available_services_title">الخدمات المتاحة</string>
+
+    <!-- Feature Box -->
+    <string name="feature_fast">سريع</string>
+    <string name="feature_fast_desc">خدمة فورية</string>
+    <string name="feature_safe">آمن</string>
+    <string name="feature_safe_desc">موثوق 100%</string>
+    <string name="feature_24_7">24/7</string>
+    <string name="feature_24_7_desc">متاح دائماً</string>
+
+    <!-- Services -->
+    <string name="service_branch_load">كثافة الفروع</string>
+    <string name="service_branch_load_desc">أنجز معاملاتك في الفرع اليوم</string>
+    <string name="service_book_appointment">حجز موعد</string>
+    <string name="service_book_appointment_desc">أنجز معاملاتك في الأيام القادمة</string>
+    <string name="service_forms">النماذج</string>
+    <string name="service_forms_desc">تصفح وتحميل النماذج</string>
+    <string name="service_enotary">التوثيق الإلكتروني</string>
+    <string name="service_enotary_desc">بوابة التوثيق الرقمي المصرية</string>
+    <string name="service_booking_inquiry">الاستعلام عن الحجز</string>
+    <string name="service_booking_inquiry_desc">تتبع حجوزاتك</string>
+    <string name="service_other_services">خدمات أخرى</string>
+    <string name="service_other_services_desc">المزيد من الخدمات</string>
+
+    <!-- WebView Screen -->
+    <string name="webview_loading">جاري التحميل…</string>
+    <string name="webview_error_title">فشل تحميل الصفحة</string>
+    <string name="webview_error_message">تحقق من اتصالك بالإنترنت وحاول مرة أخرى</string>
+    <string name="webview_retry">إعادة المحاولة</string>
+    <string name="webview_refresh">تحديث</string>
+    <string name="webview_back">رجوع</string>
+    <string name="webview_forward">تقدم</string>
+
+    <!-- Other Services Screen -->
+    <string name="other_services_title">خدمات أخرى</string>
+    <string name="other_services_subtitle">المزيد من الخدمات</string>
+    <string name="other_service_translation">خدمات الترجمة</string>
+    <string name="other_service_real_estate">شهادات عقارية</string>
+    <string name="other_service_contract_copy">صوره من عقد مشهر</string>
+    <string name="other_service_access_gov">الوصول إلى الخدمات الحكومية</string>
+
+    <!-- Find Office Screen -->
+    <string name="find_office_title">مكاتب التوثيق</string>
+    <string name="offices_available">عدد المكاتب المتاحة</string>
+    <string name="all_governments">كل المحافظات</string>
+    <string name="search_offices">ابحث عن المكاتب…</string>
+    <string name="filter_all">الكل</string>
+    <string name="filter_nearest">الأقرب</string>
+    <string name="filter_premium">المميزة</string>
+
+    <!-- Location Permission -->
+    <string name="location_permission_title">الوصول إلى الموقع مطلوب</string>
+    <string name="location_permission_message">للعثور على أقرب المكاتب إليك، نحتاج إلى الوصول إلى موقعك. يساعدنا هذا على عرض المكاتب مرتبة حسب المسافة.</string>
+    <string name="allow">السماح</string>
+    <string name="deny">ليس الآن</string>
+    <string name="km_unit">كم</string>
+
+    <!-- Office Details Screen -->
+    <string name="office_address_label">العنوان</string>
+    <string name="office_phone_label">الهاتف</string>
+    <string name="office_working_hours_label">ساعات العمل</string>
+    <string name="office_action_call">اتصال</string>
+    <string name="office_action_message">رسالة</string>
+    <string name="office_action_directions">الاتجاهات</string>
+    <string name="book_appointment_button">حجز موعد</string>
+
+    <!-- Office Reservation -->
+    <string name="reservation_form_title">احجز موعدك</string>
+    <string name="reservation_form_subtitle">يرجى ملء جميع المعلومات المطلوبة لإتمام الحجز</string>
+    <string name="reservation_national_id">الرقم القومي</string>
+    <string name="reservation_classification">تصنيف الخدمة</string>
+    <string name="reservation_type">نوع الخدمة</string>
+    <string name="reservation_date">تاريخ الحجز</string>
+    <string name="reservation_time">وقت الحجز</string>
+    <string name="reservation_confirmation">أؤكد أن جميع المعلومات المقدمة صحيحة وكاملة</string>
+    <string name="submit_reservation">تأكيد الحجز</string>
+    <string name="important_notes">معلومات هامة</string>
+    <string name="note_1">الرقم القومي يجب أن يكون 14 رقماً</string>
+    <string name="note_2">لا يُمكن من تعديل الحجز بعد الإرسال</string>
+    <string name="national_id_valid">الرقم القومي صحيح</string>
+
+    <!-- Reservation Ticket -->
+    <string name="reservation_success_title">تم تأكيد الحجز!</string>
+    <string name="reservation_success_subtitle">تم حجز موعدك بنجاح. يرجى الحضور في الموعد المحدد.</string>
+    <string name="ticket_details_title">تفاصيل التذكرة</string>
+    <string name="office_name_label">اسم المكتب</string>
+    <string name="attendance_number_label">رقم الحضور</string>
+    <string name="important_note_title">ملاحظة هامة</string>
+    <string name="reservation_note_message">• فى حالة عدم الحضور في بداية الموعد المحدد يلغى الحجز\n• يشترط أن يكون الحاجز أحد أطراف المعاملة فيما عدا ذلك يلغى الحجز\n• يرجى العلم ان يمكنك الإستعلام عن حجوزاتك الآن\n• يجب العلم ان تكرار الحجز مع عدم الحضور او الإلغاء سوف يعرضك للحجب من الحجز لفتره</string>
+
+    <!-- Validation Error Messages -->
+    <string name="error_national_id_required">الرقم القومي مطلوب</string>
+    <string name="error_national_id_length">يجب أن يكون الرقم القومي 14 رقماً</string>
+    <string name="error_national_id_validation">يرجى الانتظار للتحقق من صحة الرقم القومي</string>
+    <string name="error_classification_required">يرجى اختيار تصنيف الخدمة</string>
+    <string name="error_type_required">يرجى اختيار نوع الخدمة</string>
+    <string name="error_date_required">يرجى اختيار تاريخ الموعد</string>
+    <string name="error_time_required">يرجى اختيار وقت الموعد</string>
+    <string name="error_confirmation_required">يرجى التأكيد على صحة جميع البيانات</string>
+
+    <!-- File Viewer -->
+    <string name="file_viewer">عارض الملفات</string>
+    <string name="back">رجوع</string>
+
+    <!-- Settings -->
+    <string name="settings_title">الإعدادات</string>
+    <string name="done">تم</string>
+    <string name="settings_language_section">اللغة</string>
+    <string name="settings_theme_section">مظهر التطبيق</string>
+    <string name="theme_light">الوضع الفاتح</string>
+    <string name="theme_dark">الوضع الداكن</string>
+    <string name="about_app">حول التطبيق</string>
+    <string name="version">الإصدار</string>
+
+    <!-- Splash Screen -->
+    <string name="powered_by">Powered by Informatique</string>
+</resources>

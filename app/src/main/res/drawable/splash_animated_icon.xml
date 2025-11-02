@@ -1,0 +1,86 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="108dp"
+            android:height="108dp"
+            android:viewportWidth="108"
+            android:viewportHeight="108">
+
+            <!-- Background circle -->
+            <group
+                android:name="background_group"
+                android:pivotX="54"
+                android:pivotY="54">
+                <path
+                    android:name="background_circle"
+                    android:pathData="M54,54m-45,0a45,45 0,1 1,90 0a45,45 0,1 1,-90 0"
+                    android:fillColor="@color/splash_icon_tint"
+                    android:fillAlpha="0.15"/>
+            </group>
+
+            <!-- Logo group -->
+            <group
+                android:name="logo_group"
+                android:pivotX="54"
+                android:pivotY="54">
+                <!-- Stylized logo representation -->
+                <path
+                    android:pathData="M44,34 L64,34 L64,74 L44,74 Z"
+                    android:fillColor="@color/splash_icon_tint"/>
+                <path
+                    android:pathData="M48,38 L60,38 L60,70 L48,70 Z"
+                    android:fillColor="@color/splash_background"/>
+                <path
+                    android:pathData="M52,42 L56,42 L56,66 L52,66 Z"
+                    android:fillColor="@color/splash_icon_tint"/>
+            </group>
+        </vector>
+    </aapt:attr>
+
+    <!-- Scale animation for background -->
+    <target android:name="background_group">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="scaleX"
+                    android:duration="800"
+                    android:valueFrom="0.8"
+                    android:valueTo="1.1"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+                <objectAnimator
+                    android:propertyName="scaleY"
+                    android:duration="800"
+                    android:valueFrom="0.8"
+                    android:valueTo="1.1"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+            </set>
+        </aapt:attr>
+    </target>
+
+    <!-- Scale and fade animation for logo -->
+    <target android:name="logo_group">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="scaleX"
+                    android:duration="600"
+                    android:valueFrom="0.5"
+                    android:valueTo="1.0"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/overshoot"/>
+                <objectAnimator
+                    android:propertyName="scaleY"
+                    android:duration="600"
+                    android:valueFrom="0.5"
+                    android:valueTo="1.0"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/overshoot"/>
+            </set>
+        </aapt:attr>
+    </target>
+</animated-vector>
+
