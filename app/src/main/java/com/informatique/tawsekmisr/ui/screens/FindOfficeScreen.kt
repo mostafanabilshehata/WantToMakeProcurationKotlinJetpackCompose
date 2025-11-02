@@ -72,6 +72,7 @@ import com.informatique.tawsekmisr.R
 import com.informatique.tawsekmisr.data.model.Office
 import com.informatique.tawsekmisr.ui.components.localizedApp
 import com.informatique.tawsekmisr.ui.components.CustomAlertDialog
+import com.informatique.tawsekmisr.ui.components.CustomDropdown
 import com.informatique.tawsekmisr.ui.theme.LocalExtraColors
 import com.informatique.tawsekmisr.ui.providers.LocalOffices
 import com.informatique.tawsekmisr.ui.providers.LocalGovernments
@@ -419,76 +420,26 @@ fun FindOfficeScreen(
             // Normal content when data is available
             // Government Dropdown - Only visible when "all" filter is selected
             if (selectedFilter == "all") {
-                ExposedDropdownMenuBox(
-                    expanded = isGovernmentDropdownExpanded,
-                    onExpandedChange = { isGovernmentDropdownExpanded = !isGovernmentDropdownExpanded }
-                ) {
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor(MenuAnchorType.PrimaryNotEditable),
-                        shape = RoundedCornerShape(16.dp),
-                        color = extraColors.cardBackground
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { isGovernmentDropdownExpanded = true }
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.AccountBalance,
-                                    contentDescription = null,
-                                    tint = extraColors.iconDarkBlue
-                                )
-                                Text(
-                                    text = if (selectedGovernment == "all")
-                                        localizedApp(R.string.all_governments)
-                                    else selectedGovernment,
-                                    fontSize = 16.sp,
-                                    color = extraColors.textBlue
-                                )
-                            }
-                            Icon(
-                                imageVector = Icons.Default.KeyboardArrowDown,
-                                contentDescription = null,
-                                tint = extraColors.textGray
-                            )
-                        }
-                    }
+                val allGovernmentsText = localizedApp(R.string.all_governments)
 
-                    ExposedDropdownMenu(
-                        expanded = isGovernmentDropdownExpanded,
-                        onDismissRequest = { isGovernmentDropdownExpanded = false }
-                    ) {
-                        governmentOptions.forEach { government ->
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = if (government == "all")
-                                            localizedApp(R.string.all_governments)
-                                        else government
-                                    )
-                                },
-                                onClick = {
-                                    viewModel.setSelectedGovernment(government)
-                                    isGovernmentDropdownExpanded = false
-                                }
-                            )
-                        }
-                    }
-                }
+                CustomDropdown(
+                    label = localizedApp(R.string.all_governments),
+                    options = governmentOptions,
+                    selectedOption = if (selectedGovernment == "all")
+                        null  // مش هنعرض حاجة، هنسيب الـ placeholder يظهر
+                    else
+                        selectedGovernment,
+                    onOptionSelected = { government ->
+                        viewModel.setSelectedGovernment(government)
+                    },
+                    leadingIcon = Icons.Default.AccountBalance,
+                    placeholder = allGovernmentsText,
+                    mandatory = false,
+                    enabled = true
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
-            }
-
-        // Search Bar
+            }        // Search Bar
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
