@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import com.informatique.tawsekmisr.R
 import com.informatique.tawsekmisr.data.model.Office
+import com.informatique.tawsekmisr.ui.components.CustomDropdown
 import com.informatique.tawsekmisr.ui.components.localizedApp
 import com.informatique.tawsekmisr.ui.theme.LocalExtraColors
 import com.informatique.tawsekmisr.ui.providers.LocalOffices
@@ -266,71 +267,18 @@ fun FindOfficeScreen(
 
         // Government Dropdown - Only visible when "all" filter is selected
         if (selectedFilter == "all") {
-            ExposedDropdownMenuBox(
-                expanded = isGovernmentDropdownExpanded,
-                onExpandedChange = { isGovernmentDropdownExpanded = !isGovernmentDropdownExpanded }
-            ) {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(MenuAnchorType.PrimaryNotEditable),
-                    shape = RoundedCornerShape(16.dp),
-                    color = extraColors.cardBackground
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { isGovernmentDropdownExpanded = true }
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AccountBalance,
-                                contentDescription = null,
-                                tint = extraColors.iconDarkBlue
-                            )
-                            Text(
-                                text = if (selectedGovernment == "all")
-                                    localizedApp(R.string.all_governments)
-                                else selectedGovernment,
-                                fontSize = 16.sp,
-                                color = extraColors.textBlue
-                            )
-                        }
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = null,
-                            tint = extraColors.textGray
-                        )
-                    }
-                }
-
-                ExposedDropdownMenu(
-                    expanded = isGovernmentDropdownExpanded,
-                    onDismissRequest = { isGovernmentDropdownExpanded = false }
-                ) {
-                    governmentOptions.forEach { government ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = if (government == "all")
-                                        localizedApp(R.string.all_governments)
-                                    else government
-                                )
-                            },
-                            onClick = {
-                                viewModel.setSelectedGovernment(government)
-                                isGovernmentDropdownExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
+            CustomDropdown(
+                label = localizedApp(R.string.all_governments),
+                options = governmentOptions.filter { it != "all" }, // بنشيل "all" من الأوبشنز لو موجودة
+                selectedOption = if (selectedGovernment == "all") null else selectedGovernment,
+                onOptionSelected = { government ->
+                    viewModel.setSelectedGovernment(government)
+                },
+                leadingIcon = Icons.Default.AccountBalance,
+                placeholder = localizedApp(R.string.all_governments),
+                mandatory = false,
+                enabled = true
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -343,7 +291,7 @@ fun FindOfficeScreen(
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth().padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -468,7 +416,7 @@ private fun FilterChip(
                 text = label,
                 color = if (isSelected) Color.White else extraColors.iconDarkBlue,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Normal
             )
         }
     }
@@ -488,13 +436,15 @@ private fun OfficeCard(
             .clip(RoundedCornerShape(16.dp))
             .clickable { onClick() },
         color = extraColors.cardBackground,
-        shadowElevation = 2.dp
+        shadowElevation = 0.dp
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+
         ) {
             // Icon Box
             Box(
@@ -503,34 +453,34 @@ private fun OfficeCard(
                     .clip(RoundedCornerShape(16.dp))
                     .background(
                         if (office.isPremium) extraColors.gold.copy(alpha = 0.2f)
-                        else extraColors.iconDarkBlue.copy(alpha = 0.15f)
+                        else extraColors.iconLightBackground
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = officeIcon,
                     contentDescription = null,
-                    tint = if (office.isPremium) extraColors.gold else extraColors.iconDarkBlue,
+                    tint = if (office.isPremium) extraColors.gold else extraColors.iconLightBlue,
                     modifier = Modifier.size(40.dp)
                 )
 
-                if (office.isVerified) {
-                    Surface(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .offset(x = 8.dp, y = (-8).dp)
-                            .size(24.dp),
-                        shape = CircleShape,
-                        color = extraColors.iconDarkBlue.copy(alpha = 0.15f)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "Verified",
-                            tint = Color.White,
-                            modifier = Modifier.padding(4.dp)
-                        )
-                    }
-                }
+//                if (office.isVerified) {
+//                    Surface(
+//                        modifier = Modifier
+//                            .align(Alignment.TopEnd)
+//                            .offset(x = 8.dp, y = (-8).dp)
+//                            .size(24.dp),
+//                        shape = CircleShape,
+//                        color = extraColors.iconDarkBlue.copy(alpha = 0.15f)
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.Default.Check,
+//                            contentDescription = "Verified",
+//                            tint = Color.White,
+//                            modifier = Modifier.padding(4.dp)
+//                        )
+//                    }
+//                }
             }
 
             // Office Info
@@ -557,13 +507,13 @@ private fun OfficeCard(
                     Icon(
                         imageVector = Icons.Default.Tag,
                         contentDescription = null,
-                        tint = extraColors.textGray,
+                        tint = if (office.isPremium) extraColors.gold else extraColors.textGray,
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
                         text = office.type,
                         fontSize = 12.sp,
-                        color = extraColors.textGray,
+                        color = if (office.isPremium) extraColors.gold else extraColors.textBlue,
                         maxLines = 1,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
@@ -576,13 +526,13 @@ private fun OfficeCard(
                     Icon(
                         imageVector = Icons.Default.Info,
                         contentDescription = null,
-                        tint = extraColors.iconDarkBlue.copy(alpha = 0.15f),
+                        tint =  extraColors.textDarkGray,
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
                         text = office.address,
                         fontSize = 12.sp,
-                        color = extraColors.textGray,
+                        color = extraColors.textDarkGray,
                         maxLines = 1,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )

@@ -45,8 +45,8 @@ fun ReservationTicketScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(extraColors.background)
-            .verticalScroll(scrollState)
+            .background(extraColors.backgroundGradient)
+        .verticalScroll(scrollState)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -190,14 +190,13 @@ fun ReservationTicketScreen(
         // OK Button
         CommonButton(
             text = localizedApp(R.string.ok_button),
-            backgroundColor = extraColors.buttonDarkBlue,
+            backgroundColor = extraColors.iconDarkBlue,
             onClick = {
                 navController.navigate("homepage") {
                     popUpTo("homepage") { inclusive = true }
                 }
             }
         )
-
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
@@ -217,7 +216,7 @@ private fun TicketInfoRow(
         Text(
             text = label,
             fontSize = 14.sp,
-            color = extraColors.textGray,
+            color = extraColors.textDarkGray,
             modifier = Modifier.width(120.dp)
         )
 
@@ -228,7 +227,7 @@ private fun TicketInfoRow(
             text = value,
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
-            color = extraColors.textBlue,
+            color = extraColors.white,
             modifier = Modifier.weight(1f)
         )
     }

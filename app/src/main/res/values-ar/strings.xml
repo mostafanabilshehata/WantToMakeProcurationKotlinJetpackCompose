@@ -7,7 +7,7 @@
     <string name="loading">جاري التحميل</string>
     <string name="retry">إعادة المحاولة</string>
     <string name="back_button">رجوع</string>
-    <string name="ok_button">حسناً</string>
+    <string name="ok_button">موافق</string>
     <string name="error_title">خطأ</string>
 
     <!-- Home Screen -->
@@ -129,4 +129,10 @@
 
     <!-- Splash Screen -->
     <string name="powered_by">Powered by Informatique</string>
+
+    <string name="enter_national_id">أدخل الرقم القومي</string>
+    <string name="enter_category">ادخل التصنيف</string>
+    <string name="enter_type">اختر </string>
+    <string name="enter_date">ادخل يوم الحجز</string>
+    <string name="enter_time">اختر</string>
 </resources>

@@ -395,7 +395,6 @@ class LandingActivity: BaseActivity() {
         }
     }
 }
-
 @Composable
 fun SplashScreenOverlay() {
     val infiniteTransition = rememberInfiniteTransition(label = "splash")
@@ -439,37 +438,42 @@ fun SplashScreenOverlay() {
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(extraColors.iconDarkBlue),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        // Animated Background Circle 1
+        // Background Layer with Blur
         Box(
             modifier = Modifier
-                .offset(x = (-100).dp, y = (-200).dp)
-                .size(300.dp)
-                .scale(circle1Scale)
-                .background(
-                    color = Color.White.copy(alpha = 0.1f),
-                    shape = CircleShape
-                )
-                .blur(10.dp)
-        )
+                .fillMaxSize()
+                .background(extraColors.iconDarkBlue)
+                .blur(radius = 12.dp)
+        ) {
+            // Animated Background Circle 1
+            Box(
+                modifier = Modifier
+                    .offset(x = (-100).dp, y = (-200).dp)
+                    .size(300.dp)
+                    .scale(circle1Scale)
+                    .background(
+                        color = Color.White.copy(alpha = 0.1f),
+                        shape = CircleShape
+                    )
+            )
 
-        // Animated Background Circle 2
-        Box(
-            modifier = Modifier
-                .offset(x = 150.dp, y = 250.dp)
-                .size(400.dp)
-                .scale(circle2Scale)
-                .background(
-                    color = Color.White.copy(alpha = 0.08f),
-                    shape = CircleShape
-                )
-                .blur(15.dp)
-        )
+            // Animated Background Circle 2
+            Box(
+                modifier = Modifier
+                    .offset(x = 150.dp, y = 250.dp)
+                    .size(400.dp)
+                    .scale(circle2Scale)
+                    .background(
+                        color = Color.White.copy(alpha = 0.08f),
+                        shape = CircleShape
+                    )
+            )
+        }
 
+        // Content Layer (Clear, No Blur)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
@@ -483,28 +487,6 @@ fun SplashScreenOverlay() {
                     .scale(logoScale)
                     .alpha(logoOpacity)
             ) {
-                // Shadow Circle 1 (Outer)
-                Box(
-                    modifier = Modifier
-                        .size(180.dp)
-                        .background(
-                            color = Color.White.copy(alpha = 0.15f),
-                            shape = CircleShape
-                        )
-                        .blur(20.dp)
-                )
-
-                // Shadow Circle 2 (Inner)
-                Box(
-                    modifier = Modifier
-                        .size(160.dp)
-                        .background(
-                            color = Color.White.copy(alpha = 0.2f),
-                            shape = CircleShape
-                        )
-                        .blur(10.dp)
-                )
-
                 // Logo Image
                 Image(
                     painter = painterResource(id = R.drawable.logo),

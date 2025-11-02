@@ -1,11 +1,22 @@
 package com.informatique.tawsekmisr.ui.components
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.informatique.tawsekmisr.ui.theme.LocalExtraColors
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -18,52 +29,79 @@ fun CustomRestrictedDatePicker(
     error: String? = null,
     mandatory: Boolean = false,
     allowedDatesInMillis: Set<Long> = emptySet(),
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    leadingIcon: ImageVector? = null,
+    placeholder: String? = null
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
+    val extraColors = LocalExtraColors.current
 
-    OutlinedTextField(
-        value = value,
-        onValueChange = {},
-        readOnly = true,
-        enabled = enabled,
-        label = {
-            Text(
-                text = if (mandatory) "$label *" else label,
-                color = if (error != null) MaterialTheme.colorScheme.error
-                else MaterialTheme.colorScheme.onSurfaceVariant
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(enabled = enabled) {
+                    showDatePicker = true
+                }
+        ) {
+            OutlinedTextField(
+                value = value,
+                onValueChange = {},
+                shape = RoundedCornerShape(16.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = extraColors.cardBackground,
+                    unfocusedContainerColor = extraColors.cardBackground,
+                    disabledContainerColor = extraColors.cardBackground,
+                    focusedBorderColor = if (error != null) Color(0xFFE74C3C) else Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    disabledBorderColor = Color.Transparent,
+                    focusedTextColor = extraColors.textBlue,
+                    unfocusedTextColor = extraColors.textBlue,
+                    disabledTextColor = extraColors.textBlue
+                ),
+                readOnly = true,
+                enabled = false,
+                placeholder = {
+                    if (value.isEmpty() && placeholder != null) {
+                        Text(
+                            text = placeholder,
+                            color = extraColors.textGray,
+                            fontSize = 16.sp
+                        )
+                    }
+                },
+                leadingIcon = if (leadingIcon != null) {
+                    {
+                        Icon(
+                            imageVector = leadingIcon,
+                            contentDescription = null,
+                            tint = extraColors.iconDarkBlue,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                } else null,
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Select date",
+                        tint = if (enabled) extraColors.textGray
+                        else extraColors.textGray.copy(alpha = 0.3f)
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                isError = error != null,
+                singleLine = true
             )
-        },
-        trailingIcon = {
-            IconButton(
-                onClick = { showDatePicker = true },
-                enabled = enabled
-            ) {
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = "Select date",
-                    tint = if (error != null) MaterialTheme.colorScheme.error
-                    else MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        },
-        modifier = Modifier.fillMaxWidth(),
-        isError = error != null,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            focusedLabelColor = MaterialTheme.colorScheme.primary,
-            errorBorderColor = MaterialTheme.colorScheme.error,
-            errorLabelColor = MaterialTheme.colorScheme.error
-        )
-    )
+        }
 
-    if (error != null) {
-        Text(
-            text = error,
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.fillMaxWidth()
-        )
+        if (error != null) {
+            Text(
+                text = error,
+                fontSize = 12.sp,
+                color = Color(0xFFE74C3C),
+                modifier = Modifier.padding(top = 4.dp, start = 4.dp)
+            )
+        }
     }
 
     if (showDatePicker) {
@@ -120,8 +158,8 @@ fun RestrictedDatePickerModal(
                 allowedCalendar.timeInMillis = allowedMillis
 
                 allowedCalendar.get(Calendar.YEAR) == year &&
-                allowedCalendar.get(Calendar.MONTH) == month &&
-                allowedCalendar.get(Calendar.DAY_OF_MONTH) == day
+                        allowedCalendar.get(Calendar.MONTH) == month &&
+                        allowedCalendar.get(Calendar.DAY_OF_MONTH) == day
             }
         }
 
