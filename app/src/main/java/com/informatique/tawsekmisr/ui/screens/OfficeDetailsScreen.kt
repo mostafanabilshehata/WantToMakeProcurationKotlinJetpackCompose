@@ -196,7 +196,8 @@ fun OfficeDetailsScreen(
                             Text(
                                 text = office.name,
                                 fontSize = 24.sp,
-                                color = extraColors.textBlue
+                                color = extraColors.textBlue,
+                                fontWeight = FontWeight.Normal
                             )
 
                             Spacer(modifier = Modifier.height(12.dp))
@@ -268,7 +269,8 @@ fun OfficeDetailsScreen(
                         ) {
                             Column(
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
                                     text = String.format("%.1f", distance),
@@ -407,14 +409,15 @@ private fun OfficeDetailRow(
         ) {
             Text(
                 text = label,
-                fontSize = 13.sp,
-                color = extraColors.textGray
+                fontSize = 14.sp,
+                color = extraColors.textGray,
+                fontWeight = FontWeight.Normal
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = value,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
                 color = extraColors.textBlue
             )
         }

@@ -20,7 +20,11 @@ data class ExtraColors(
     val iconLightBlue : Color,
     val iconDarkBlue : Color,
     val buttonDarkBlue : Color,
-    val backgroundGradient : Brush
+    val backgroundGradient : Brush,
+    val homeVerticalCardBackground : Color,
+    val iconSettings : Color,
+    val textDarkGray : Color,
+    val white : Color
 
 
 
@@ -47,7 +51,11 @@ val LightExtraColors = ExtraColors(
             AccentLight.copy(alpha = 0.05f),
             Color.White
         )
-    )
+    ),
+    homeVerticalCardBackground = HomeVerticalCardsBackgroundLight,
+    iconSettings = SettingiconLight ,
+    textDarkGray = TextDarkGrayLight,
+    white = White
 
 
 )
@@ -74,7 +82,11 @@ val DarkExtraColors = ExtraColors(
             AccentDark.copy(alpha = 0.05f),
             BackGroundDark
         )
-    )
+    ),
+    homeVerticalCardBackground = HomeVerticalCardsBackgroundDark,
+    iconSettings = SettingiconDark,
+    textDarkGray = TextDarkGrayDark,
+    white = Black
 
 )
 

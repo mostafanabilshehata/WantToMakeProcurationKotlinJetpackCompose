@@ -51,7 +51,7 @@ fun OtherServicesScreen(navController: NavController) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = extraColors.cardBackground
+                    containerColor = Color.Transparent
                 )
             )
         }
@@ -59,7 +59,7 @@ fun OtherServicesScreen(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(extraColors.background)
+                .background(extraColors.backgroundGradient)
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally

@@ -107,12 +107,12 @@ fun HomePageScreen(navController: NavController) {
                         .size(50.dp)
                         .clip(CircleShape)
                         .clickable { navController.navigate("settings_screen") },
-                    color = Color.White
+                    color = extraColors.homeVerticalCardBackground
                 ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Settings",
-                        tint = extraColors.textGray,
+                        tint = extraColors.iconSettings,
                         modifier = Modifier.padding(12.dp)
                     )
                 }
@@ -145,11 +145,11 @@ fun HomePageScreen(navController: NavController) {
                         extraColors = extraColors
                     )
 
-                    HorizontalDivider(
+                    Divider(
+                        color = Color.Gray,
                         modifier = Modifier
-                            .height(80.dp)
-                            .width(1.dp),
-                        color = extraColors.iconLightBackground
+                            .height(100.dp)
+                            .width(1.dp).align(Alignment.CenterVertically)
                     )
 
                     // Safe Feature
@@ -161,11 +161,11 @@ fun HomePageScreen(navController: NavController) {
                         extraColors = extraColors
                     )
 
-                    HorizontalDivider(
+                    Divider(
+                        color = Color.Gray,
                         modifier = Modifier
-                            .height(80.dp)
-                            .width(1.dp),
-                        color = extraColors.iconLightBackground
+                            .height(100.dp)
+                            .width(1.dp).align(Alignment.CenterVertically)
                     )
 
                     // Fast Feature
@@ -288,8 +288,9 @@ private fun FeatureBox(
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = subtitle,
-            fontSize = 11.sp,
+            fontSize = 14.sp,
             color = extraColors.textGray,
+            fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center
         )
     }
@@ -336,10 +337,8 @@ private fun ServiceCardHorizontal(
                 onClick()
             },
         shape = RoundedCornerShape(22.dp),
-        colors = CardDefaults.cardColors(containerColor = extraColors.cardBackground),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isPressed) 25.dp else 15.dp
-        )
+        colors = CardDefaults.cardColors(containerColor = extraColors.homeVerticalCardBackground),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -410,7 +409,7 @@ private fun ServiceCardHorizontal(
                 Text(
                     text = title,
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.SemiBold,
                     color = extraColors.textBlue,
                     textAlign = TextAlign.Start,
                     maxLines = 2,
@@ -421,7 +420,7 @@ private fun ServiceCardHorizontal(
 
                 Text(
                     text = subtitle,
-                    fontSize = 13.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,
                     color = extraColors.textGray,
                     textAlign = TextAlign.Start,

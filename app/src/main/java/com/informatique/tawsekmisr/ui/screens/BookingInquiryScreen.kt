@@ -65,7 +65,7 @@ fun BookingInquiryScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
+                    containerColor = Color.Transparent
                 )
             )
         }
@@ -73,7 +73,7 @@ fun BookingInquiryScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(extraColors.background)
+                .background(extraColors.backgroundGradient)
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -85,7 +85,7 @@ fun BookingInquiryScreen(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp),
-                    color = Color.White,
+                    color = extraColors.cardBackground,
                     shadowElevation = 4.dp
                 ) {
                     Row(
@@ -97,13 +97,13 @@ fun BookingInquiryScreen(
                         Surface(
                             modifier = Modifier.size(56.dp),
                             shape = RoundedCornerShape(16.dp),
-                            color = Color(110, 179, 166).copy(alpha = 0.15f)
+                            color = extraColors.iconLightBackground
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = null,
-                                tint = Color(110, 179, 166),
-                                modifier = Modifier.padding(14.dp)
+                                tint = extraColors.iconLightBlue,
+                                modifier = Modifier.padding(12.dp)
                             )
                         }
 
@@ -111,14 +111,14 @@ fun BookingInquiryScreen(
                             Text(
                                 text = "استعلام عن حجوزاتك",
                                 fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                fontWeight = FontWeight.SemiBold,
+                                color = extraColors.textBlue
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = "أدخل الرقم القومي للاستعلام عن جميع حجوزاتك",
                                 fontSize = 13.sp,
-                                color = Color(126, 126, 133),
+                                color = extraColors.textGray,
                                 lineHeight = 18.sp
                             )
                         }
@@ -135,6 +135,7 @@ fun BookingInquiryScreen(
                     onValueChange = { viewModel.updateNationalId(it) },
                     label = localizedApp(R.string.reservation_national_id),
                     isNumeric = true,
+                    placeholder = localizedApp(R.string.enter_national_id),
                     error = nationalIdError,
                     mandatory = true
                 )
@@ -183,7 +184,7 @@ fun BookingInquiryScreen(
                 // Inquiry Button
                 CommonButton(
                     text = "استعلام",
-                    backgroundColor = Color(110, 179, 166),
+                    backgroundColor = extraColors.iconDarkBlue,
                     enabled = !isLoading,
                     onClick = { viewModel.fetchReservations() }
                 )
@@ -199,7 +200,7 @@ fun BookingInquiryScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(
-                            color = Color(110, 179, 166)
+                            color = extraColors.iconDarkBlue,
                         )
                     }
                 }
@@ -248,8 +249,8 @@ fun BookingInquiryScreen(
                     Text(
                         text = "حجوزاتك (${filteredReservations.size})",
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
+                        fontWeight = FontWeight.SemiBold,
+                        color = extraColors.white,
                         modifier = Modifier.padding(top = 8.dp)
                     )
                 }
@@ -338,8 +339,8 @@ private fun ReservationCard(reservation: InquireReservation) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = Color.White,
-        shadowElevation = 2.dp
+        color = LocalExtraColors.current.cardBackground,
+        shadowElevation = 0.dp
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -357,31 +358,31 @@ private fun ReservationCard(reservation: InquireReservation) {
                     Icon(
                         imageVector = Icons.Default.AccountBalance,
                         contentDescription = null,
-                        tint = Color(110, 179, 166),
+                        tint = LocalExtraColors.current.iconDarkBlue,
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
                         text = reservation.orgName,
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
+                        fontWeight = FontWeight.SemiBold,
+                        color = LocalExtraColors.current.textBlue,
                         modifier = Modifier.weight(1f, fill = false)
                     )
                 }
 
-                // Queue ID Badge
-                Surface(
-                    shape = RoundedCornerShape(6.dp),
-                    color = Color(98, 138, 236).copy(alpha = 0.15f)
-                ) {
-                    Text(
-                        text = "#${reservation.queVipId}",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(98, 138, 236),
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                    )
-                }
+//                // Queue ID Badge
+//                Surface(
+//                    shape = RoundedCornerShape(6.dp),
+//                    color = Color(98, 138, 236).copy(alpha = 0.15f)
+//                ) {
+//                    Text(
+//                        text = "#${reservation.queVipId}",
+//                        fontSize = 11.sp,
+//                        fontWeight = FontWeight.Bold,
+//                        color = Color(98, 138, 236),
+//                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+//                    )
+//                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -393,7 +394,7 @@ private fun ReservationCard(reservation: InquireReservation) {
             // Transaction Category
             InfoRow(
                 icon = Icons.Default.Category,
-                iconColor = Color(110, 179, 166),
+                iconColor =LocalExtraColors.current.iconLightBlue,
                 label = "التصنيف",
                 value = reservation.transactionDesc
             )
@@ -403,7 +404,7 @@ private fun ReservationCard(reservation: InquireReservation) {
             // Transaction Type
             InfoRow(
                 icon = Icons.Default.Description,
-                iconColor = Color(98, 138, 236),
+                iconColor =LocalExtraColors.current.iconLightBlue,
                 label = "نوع المعاملة",
                 value = reservation.transactionTypeDesc
             )
@@ -419,7 +420,7 @@ private fun ReservationCard(reservation: InquireReservation) {
                 Box(modifier = Modifier.weight(1f)) {
                     InfoRow(
                         icon = Icons.Default.CalendarMonth,
-                        iconColor = Color(255, 159, 10),
+                        iconColor =LocalExtraColors.current.iconLightBlue,
                         label = "التاريخ",
                         value = formattedDate
                     )
@@ -429,7 +430,7 @@ private fun ReservationCard(reservation: InquireReservation) {
                 Box(modifier = Modifier.weight(1f)) {
                     InfoRow(
                         icon = Icons.Default.Schedule,
-                        iconColor = Color(110, 179, 166),
+                        iconColor =LocalExtraColors.current.iconLightBlue,
                         label = "الوقت",
                         value = formattedTime
                     )
@@ -448,12 +449,12 @@ private fun InfoRow(
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.Top
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Surface(
             modifier = Modifier.size(32.dp),
             shape = RoundedCornerShape(16.dp),
-            color = iconColor.copy(alpha = 0.15f)
+            color = LocalExtraColors.current.iconLightBackground
         ) {
             Icon(
                 imageVector = icon,
@@ -467,14 +468,14 @@ private fun InfoRow(
             Text(
                 text = label,
                 fontSize = 11.sp,
-                color = Color(126, 126, 133)
+                color =LocalExtraColors.current.textGray
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = value,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.Black
+                color = LocalExtraColors.current.textBlue
             )
         }
     }

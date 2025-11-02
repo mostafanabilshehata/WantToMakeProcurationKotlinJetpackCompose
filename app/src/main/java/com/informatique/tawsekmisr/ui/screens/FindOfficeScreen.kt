@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import com.informatique.tawsekmisr.R
 import com.informatique.tawsekmisr.data.model.Office
+import com.informatique.tawsekmisr.ui.components.CustomDropdown
 import com.informatique.tawsekmisr.ui.components.localizedApp
 import com.informatique.tawsekmisr.ui.components.CustomAlertDialog
 import com.informatique.tawsekmisr.ui.theme.LocalExtraColors
@@ -448,43 +449,43 @@ fun FindOfficeScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Search Bar
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                color = extraColors.cardBackground
+        // Search Bar
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            color = extraColors.cardBackground
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth().padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = extraColors.textGray
-                    )
-                    TextField(
-                        value = searchQuery,
-                        onValueChange = { viewModel.setSearchQuery(it) },
-                        placeholder = {
-                            Text(
-                                text = localizedApp(R.string.search_offices),
-                                color = extraColors.textGray
-                            )
-                        },
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null,
+                    tint = extraColors.textGray
+                )
+                TextField(
+                    value = searchQuery,
+                    onValueChange = { viewModel.setSearchQuery(it) },
+                    placeholder = {
+                        Text(
+                            text = localizedApp(R.string.search_offices),
+                            color = extraColors.textGray
+                        )
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
+        }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -612,7 +613,7 @@ private fun FilterChip(
                 text = label,
                 color = if (isSelected) Color.White else extraColors.iconDarkBlue,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Normal
             )
         }
     }
@@ -632,13 +633,15 @@ private fun OfficeCard(
             .clip(RoundedCornerShape(16.dp))
             .clickable { onClick() },
         color = extraColors.cardBackground,
-        shadowElevation = 2.dp
+        shadowElevation = 0.dp
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+
         ) {
             // Icon Box
             Box(
@@ -647,34 +650,34 @@ private fun OfficeCard(
                     .clip(RoundedCornerShape(16.dp))
                     .background(
                         if (office.isPremium) extraColors.gold.copy(alpha = 0.2f)
-                        else extraColors.iconDarkBlue.copy(alpha = 0.15f)
+                        else extraColors.iconLightBackground
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = officeIcon,
                     contentDescription = null,
-                    tint = if (office.isPremium) extraColors.gold else extraColors.iconDarkBlue,
+                    tint = if (office.isPremium) extraColors.gold else extraColors.iconLightBlue,
                     modifier = Modifier.size(40.dp)
                 )
 
-                if (office.isVerified) {
-                    Surface(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .offset(x = 8.dp, y = (-8).dp)
-                            .size(24.dp),
-                        shape = CircleShape,
-                        color = extraColors.iconDarkBlue.copy(alpha = 0.15f)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "Verified",
-                            tint = Color.White,
-                            modifier = Modifier.padding(4.dp)
-                        )
-                    }
-                }
+//                if (office.isVerified) {
+//                    Surface(
+//                        modifier = Modifier
+//                            .align(Alignment.TopEnd)
+//                            .offset(x = 8.dp, y = (-8).dp)
+//                            .size(24.dp),
+//                        shape = CircleShape,
+//                        color = extraColors.iconDarkBlue.copy(alpha = 0.15f)
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.Default.Check,
+//                            contentDescription = "Verified",
+//                            tint = Color.White,
+//                            modifier = Modifier.padding(4.dp)
+//                        )
+//                    }
+//                }
             }
 
             // Office Info
@@ -701,13 +704,13 @@ private fun OfficeCard(
                     Icon(
                         imageVector = Icons.Default.Tag,
                         contentDescription = null,
-                        tint = extraColors.textGray,
+                        tint = if (office.isPremium) extraColors.gold else extraColors.textGray,
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
                         text = office.type,
                         fontSize = 12.sp,
-                        color = extraColors.textGray,
+                        color = if (office.isPremium) extraColors.gold else extraColors.textBlue,
                         maxLines = 1,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
@@ -720,13 +723,13 @@ private fun OfficeCard(
                     Icon(
                         imageVector = Icons.Default.Info,
                         contentDescription = null,
-                        tint = extraColors.iconDarkBlue.copy(alpha = 0.15f),
+                        tint =  extraColors.textDarkGray,
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
                         text = office.address,
                         fontSize = 12.sp,
-                        color = extraColors.textGray,
+                        color = extraColors.textDarkGray,
                         maxLines = 1,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
